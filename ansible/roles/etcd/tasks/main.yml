@@ -1,0 +1,73 @@
+---
+# Copyright 2019 Nokia
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: create libs
+  file:
+    name: /var/lib/etcd
+    state: directory
+    owner: caas_etcd
+    group: caas_etcd
+  become_user: "root"
+
+- set_fact:
+    master_list: "{{ groups.caas_master | list }}"
+
+- include_tasks: wait_for_etcd.yml
+  with_indexed_items:
+    - "{{ master_list }}"
+  when: ( groups['caas_master']|length|int > 1 ) and ( not nodename | search('caas_master1'))
+
+- name: template etcd manifest
+  template:
+    src: etcd.yml
+    dest: /etc/kubernetes/manifests/etcd.yml
+  become_user: "root"
+
+- name: wait for container to start
+  wait_for:
+    host: "{{ ansible_host }}"
+    port: "{{ caas.etcd_api_port }}"
+    state: started
+    timeout: "{{ caas.container_wait_timeout }}"
+  become_user: "root"
+
+- include_tasks: add_member.yml
+  with_indexed_items:
+    - "{{ hostvars[groups.caas_master[1]]['networking']['infra_internal']['ip'] }}"
+    - "{{ hostvars[groups.caas_master[2]]['networking']['infra_internal']['ip'] }}"
+  when: ( nodename | search("caas_master1") ) and ( groups['caas_master']|length|int > 1 )
+
+- name: etcd docker id
+  shell: "docker ps | grep etcd | grep -v pause | awk -F' ' '{ print $1 }'"
+  environment:
+    DOCKER_HOST: "tcp://{{ networking.infra_internal.ip }}:2375"
+    DOCKER_TLS_VERIFY: "1"
+    DOCKER_CERT_PATH: "/etc/docker"
+  register: etcd_container_id
+  until: etcd_container_id.stdout
+  delay: 5
+  retries: 60
+
+- name: sync all etcd
+  shell: "docker exec -t {{ etcd_container_id.stdout }} etcdctl3 member list | grep started | wc -l"
+  environment:
+    DOCKER_HOST: "tcp://{{ networking.infra_internal.ip }}:2375"
+    DOCKER_TLS_VERIFY: "1"
+    DOCKER_CERT_PATH: "/etc/docker"
+  register: result
+  until: result.stdout|int == master_list|length|int
+  delay: 5
+  retries: 100
+

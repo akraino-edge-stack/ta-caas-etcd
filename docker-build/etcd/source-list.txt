@@ -1,0 +1,17 @@
+#############################
+           README
+
+- only parts of lines that match this regexp '>$NAME=.*' are parsed
+- dependencies are marked with '--' indentation
+  (now only pip modules have this, and it is based on their requirements.txt)
+- 'a-->' means it is a dependency of the alpine apk as well
+  (pip and alpine depencies do not match, strangely)
+
+#############################
+
+
+==========================
+#      PIP modules       #
+==========================
+> python-etcd=https://pypi.python.org/packages/a1/da/616a4d073642da5dd432e5289b7c1cb0963cc5dde23d1ecb8d726821ab41/python-etcd-0.4.5.tar.gz
+a--> python-urllib3=https://files.pythonhosted.org/packages/b1/53/37d82ab391393565f2f831b8eedbffd57db5a718216f82f1a8b4d381a1c1/urllib3-1.24.1.tar.gz

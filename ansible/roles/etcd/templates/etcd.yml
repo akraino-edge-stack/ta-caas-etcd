@@ -1,0 +1,99 @@
+{#
+Copyright 2019 Nokia
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+#}
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: etcd
+  namespace: kube-system
+spec:
+  hostNetwork: true
+  dnsPolicy: ClusterFirst
+  securityContext:
+    runAsUser: {{ caas.uid.caas_etcd }}
+  containers:
+    - name: kube-etcd
+      image: {{ container_image_names | select('search', '/etcd') | list | last }}
+      command: ["/usr/bin/etcd"]
+      env:
+        - name: PORT
+          value: "{{ caas.etcd_api_port }}"
+        - name: ETCD_NAME
+          value: "etcd{{ nodeindex }}"
+        - name: ETCD_DATA_DIR
+          value: "/var/lib/etcd/etcd{{ nodeindex }}.etcd"
+        - name: ETCD_ADVERTISE_CLIENT_URLS
+          value: "https://{{ ansible_host }}:{{ caas.etcd_api_port }}"
+        - name: ETCD_LISTEN_CLIENT_URLS
+          value: "https://{{ ansible_host }}:{{ caas.etcd_api_port }}"
+        - name: ETCD_CLIENT_CERT_AUTH
+          value: "true"
+        - name: ETCD_TRUSTED_CA_FILE
+          value: "/etc/etcd/ssl/ca.pem"
+        - name: ETCD_CERT_FILE
+          value: "/etc/etcd/ssl/etcd{{ nodeindex }}.pem"
+        - name: ETCD_KEY_FILE
+          value: "/etc/etcd/ssl/etcd{{ nodeindex }}-key.pem"
+        - name: ETCD_MAX_WALS
+          value: "1"
+        - name: ETCD_LOG_PACKAGE_LEVELS
+          value: "etcdserver=CRITICAL,etcdmain=CRITICAL"
+        - name: ETCD_INITIAL_ADVERTISE_PEER_URLS
+          value: "https://{{ ansible_host }}:{{ caas.etcd_peer_port }}"
+        - name: ETCD_LISTEN_PEER_URLS
+          value: "https://{{ ansible_host }}:{{ caas.etcd_peer_port }}"
+        - name: ETCD_PEER_CLIENT_CERT_AUTH
+          value: "true"
+        - name: ETCD_PEER_TRUSTED_CA_FILE
+          value: "/etc/etcd/ssl/ca.pem"
+        - name: ETCD_PEER_CERT_FILE
+          value: "/etc/etcd/ssl/etcd{{ nodeindex }}.pem"
+        - name: ETCD_PEER_KEY_FILE
+          value: "/etc/etcd/ssl/etcd{{ nodeindex }}-key.pem"
+{% if nodename | search("caas_master1") %}
+        - name: ETCD_INITIAL_CLUSTER
+          value: "etcd1=https://{{ hostvars[groups.caas_master[0]]['networking']['infra_internal']['ip'] }}:{{ caas.etcd_peer_port }}"
+{% else %}
+        - name: ETCD_INITIAL_CLUSTER_STATE
+          value: "existing"
+{% endif %}
+{% if nodename | search("caas_master2") %}
+        - name: ETCD_INITIAL_CLUSTER
+          value: "etcd1=https://{{ hostvars[groups.caas_master[0]]['networking']['infra_internal']['ip'] }}:{{ caas.etcd_peer_port }},etcd2=https://{{ hostvars[groups.caas_master[1]]['networking']['infra_internal']['ip'] }}:{{ caas.etcd_peer_port }}"
+{% endif %}
+{% if nodename | search("caas_master3") %}
+        - name: ETCD_INITIAL_CLUSTER
+          value: "etcd1=https://{{ hostvars[groups.caas_master[0]]['networking']['infra_internal']['ip'] }}:{{ caas.etcd_peer_port }},etcd2=https://{{ hostvars[groups.caas_master[1]]['networking']['infra_internal']['ip'] }}:{{ caas.etcd_peer_port }},etcd3=https://{{ hostvars[groups.caas_master[2]]['networking']['infra_internal']['ip'] }}:{{ caas.etcd_peer_port }}"
+{% endif %}
+        - name: ETCD_LISTENONINTERFACE
+          value: "{{ networking.infra_internal.interface }}"
+      volumeMounts:
+        - name: store
+          mountPath: /var/lib/etcd
+        - name: etcd-config
+          mountPath: /etcd-config
+        - name: secret
+          mountPath: /etc/etcd/ssl
+          readOnly: true
+  volumes:
+    - name: store
+      hostPath:
+        path: /var/lib/etcd
+    - name: etcd-config
+      emptyDir: {}
+    - name: secret
+      hostPath:
+        path: /etc/etcd/ssl

@@ -1,0 +1,36 @@
+---
+# Copyright 2019 Nokia
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- set_fact:
+    counter_wait_for: "{{ item.0 }}"
+
+- set_fact:
+    current_oam_wait_for: "{{ item.1 }}"
+
+- set_fact:
+    etcd_number_wait_for: "{{ counter_wait_for | int + 2 }}"
+
+- set_fact:
+    expexted_oam_to_run: "caas_master{{ counter_wait_for | int + 2 }}"
+
+- name: wait for a running etcd on caas_master node from the next caas_master nodes
+  shell: "/usr/bin/curl https://{{ hostvars[current_oam_wait_for]['networking']['infra_internal']['ip'] }}:{{ caas.etcd_api_port }}/health --cacert /etc/etcd/ssl/ca.pem --cert /etc/etcd/ssl/etcd{{ etcd_number_wait_for }}.pem --key /etc/etcd/ssl/etcd{{ etcd_number_wait_for }}-key.pem"
+  register: result
+  until: ( result.stdout.find('true') != -1 ) or ( result.stdout.find('false') != -1 )
+  retries: 500
+  delay: 6
+  when:  nodename | search( expexted_oam_to_run )
+  become_user: "root"
+

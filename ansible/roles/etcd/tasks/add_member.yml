@@ -1,0 +1,62 @@
+---
+# Copyright 2019 Nokia
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- set_fact:
+    counter_add_member: "{{ item.0 }}"
+
+- set_fact:
+    etcd_address_add_member: "{{ item.1 }}"
+
+- set_fact:
+    expected_etcd_number: "{{ counter_add_member | int + 2 }}"
+
+- set_fact:
+    current_cluster_size: 0
+
+- name: wait for healthy cluster
+  shell: "/usr/bin/curl https://{{ ansible_host }}:{{ caas.etcd_api_port }}/health --cacert /etc/etcd/ssl/ca.pem --cert /etc/etcd/ssl/etcd{{ nodeindex }}.pem --key /etc/etcd/ssl/etcd{{ nodeindex }}-key.pem"
+  register: result
+  until: result.stdout.find('true') != -1
+  retries: 50
+  delay: 6
+  become_user: "root"
+
+- name: etcd docker id
+  shell: "docker ps | grep etcd | grep -v pause | awk -F' ' '{ print $1 }'"
+  environment:
+    DOCKER_HOST: "tcp://{{ networking.infra_internal.ip }}:2375"
+    DOCKER_TLS_VERIFY: "1"
+    DOCKER_CERT_PATH: "/etc/docker"
+  register: etcd_container_id_add_member
+  until: etcd_container_id_add_member.stdout
+  retries: 50
+  delay: 6
+
+- set_fact:
+    etcd_container_id_outer: "{{ etcd_container_id_add_member.stdout }}"
+
+- import_tasks: try_add_member.yml
+  until: current_cluster_size|int >= expected_etcd_number
+  retries: 10
+  delay: 5
+
+- name: wait for healthy cluster
+  shell: "/usr/bin/curl https://{{ ansible_host }}:{{ caas.etcd_api_port }}/health --cacert /etc/etcd/ssl/ca.pem --cert /etc/etcd/ssl/etcd{{ nodeindex }}.pem --key /etc/etcd/ssl/etcd{{ nodeindex }}-key.pem"
+  register: result
+  until: result.stdout.find('true') != -1
+  retries: 50
+  delay: 5
+  become_user: "root"
+
