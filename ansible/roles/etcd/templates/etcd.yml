@@ -63,24 +63,22 @@ spec:
           value: "/etc/etcd/ssl/etcd{{ nodeindex }}.pem"
         - name: ETCD_PEER_KEY_FILE
           value: "/etc/etcd/ssl/etcd{{ nodeindex }}-key.pem"
-{% if nodename | search("caas_master1") %}
         - name: ETCD_INITIAL_CLUSTER
-          value: "etcd1=https://{{ hostvars[groups.caas_master[0]]['networking']['infra_internal']['ip'] }}:{{ caas.etcd_peer_port }}"
-{% else %}
+{% set etcdclusternodes = [] -%}
+{%- for nodenumber in range(nodeindex|int) -%}
+{%- if etcdclusternodes.append('etcd' + ((nodenumber+1)|string) + '=https://' + (hostvars[groups.caas_master[nodenumber]]['networking']['infra_internal']['ip']|string) + ':' + (caas.etcd_peer_port|string) ) -%}{%- endif -%}
+{%- endfor %}
+          value: "{{ etcdclusternodes|join(",") }}"
+{% if not nodename | search("caas_master1") %}
         - name: ETCD_INITIAL_CLUSTER_STATE
           value: "existing"
-{% endif %}
-{% if nodename | search("caas_master2") %}
-        - name: ETCD_INITIAL_CLUSTER
-          value: "etcd1=https://{{ hostvars[groups.caas_master[0]]['networking']['infra_internal']['ip'] }}:{{ caas.etcd_peer_port }},etcd2=https://{{ hostvars[groups.caas_master[1]]['networking']['infra_internal']['ip'] }}:{{ caas.etcd_peer_port }}"
-{% endif %}
-{% if nodename | search("caas_master3") %}
-        - name: ETCD_INITIAL_CLUSTER
-          value: "etcd1=https://{{ hostvars[groups.caas_master[0]]['networking']['infra_internal']['ip'] }}:{{ caas.etcd_peer_port }},etcd2=https://{{ hostvars[groups.caas_master[1]]['networking']['infra_internal']['ip'] }}:{{ caas.etcd_peer_port }},etcd3=https://{{ hostvars[groups.caas_master[2]]['networking']['infra_internal']['ip'] }}:{{ caas.etcd_peer_port }}"
 {% endif %}
         - name: ETCD_LISTENONINTERFACE
           value: "{{ networking.infra_internal.interface }}"
       volumeMounts:
+        - name: time-mount
+          mountPath: /etc/localtime
+          readOnly: true
         - name: store
           mountPath: /var/lib/etcd
         - name: etcd-config
@@ -89,6 +87,9 @@ spec:
           mountPath: /etc/etcd/ssl
           readOnly: true
   volumes:
+    - name: time-mount
+      hostPath:
+        path: /etc/localtime
     - name: store
       hostPath:
         path: /var/lib/etcd
