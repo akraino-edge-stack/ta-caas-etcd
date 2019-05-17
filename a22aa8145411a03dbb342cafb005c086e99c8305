@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "40994385_a9bc58b7",
+        "filename": "ansible/roles/etcd/templates/etcd.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 186
+      },
+      "writtenOn": "2019-05-17T18:59:31Z",
+      "side": 1,
+      "message": "`nodeindex` is a host level variable, and different for every hosts. You should to use the number of controllers, or something like this.",
+      "range": {
+        "startLine": 68,
+        "startChar": 22,
+        "endLine": 68,
+        "endChar": 42
+      },
+      "revId": "a22aa8145411a03dbb342cafb005c086e99c8305",
+      "serverId": "4cada01b-0314-4fe0-84a1-f9ddc89863f9",
+      "unresolved": true
+    }
+  ]
+}
