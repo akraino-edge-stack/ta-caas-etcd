@@ -22,6 +22,30 @@
       "revId": "a22aa8145411a03dbb342cafb005c086e99c8305",
       "serverId": "4cada01b-0314-4fe0-84a1-f9ddc89863f9",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "593f6cfe_76626b93",
+        "filename": "ansible/roles/etcd/templates/etcd.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 185
+      },
+      "writtenOn": "2019-05-20T08:10:01Z",
+      "side": 1,
+      "message": "I know and using that I can increase the cluster size dynamically, one by one. eg.: If I would write all the 3 nodes in there, when the \u0027first\u0027 node comes up it would start searching for the cluster and since it is all alone it would be in read-only mode --\u003e cluster would never form.",
+      "parentUuid": "40994385_a9bc58b7",
+      "range": {
+        "startLine": 68,
+        "startChar": 22,
+        "endLine": 68,
+        "endChar": 42
+      },
+      "revId": "a22aa8145411a03dbb342cafb005c086e99c8305",
+      "serverId": "4cada01b-0314-4fe0-84a1-f9ddc89863f9",
+      "unresolved": true
     }
   ]
 }
