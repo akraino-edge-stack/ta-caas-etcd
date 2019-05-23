@@ -46,6 +46,29 @@
       "revId": "a22aa8145411a03dbb342cafb005c086e99c8305",
       "serverId": "4cada01b-0314-4fe0-84a1-f9ddc89863f9",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e6f77c05_c17c54fe",
+        "filename": "ansible/roles/etcd/templates/etcd.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 185
+      },
+      "writtenOn": "2019-05-23T13:58:22Z",
+      "side": 1,
+      "message": "TODO: nodenumber+1, since range starts from 0 --\u003e this way will fail.",
+      "range": {
+        "startLine": 69,
+        "startChar": 41,
+        "endLine": 69,
+        "endChar": 51
+      },
+      "revId": "a22aa8145411a03dbb342cafb005c086e99c8305",
+      "serverId": "4cada01b-0314-4fe0-84a1-f9ddc89863f9",
+      "unresolved": true
     }
   ]
 }
