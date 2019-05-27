@@ -69,6 +69,30 @@
       "revId": "a22aa8145411a03dbb342cafb005c086e99c8305",
       "serverId": "4cada01b-0314-4fe0-84a1-f9ddc89863f9",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6267c913_bb31ef09",
+        "filename": "ansible/roles/etcd/templates/etcd.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 185
+      },
+      "writtenOn": "2019-05-27T12:00:33Z",
+      "side": 1,
+      "message": "Done, nodenumber+1 also groups.caas_master is now stepping through the nodes.",
+      "parentUuid": "e6f77c05_c17c54fe",
+      "range": {
+        "startLine": 69,
+        "startChar": 41,
+        "endLine": 69,
+        "endChar": 51
+      },
+      "revId": "a22aa8145411a03dbb342cafb005c086e99c8305",
+      "serverId": "4cada01b-0314-4fe0-84a1-f9ddc89863f9",
+      "unresolved": false
     }
   ]
 }
