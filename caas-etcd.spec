@@ -15,7 +15,7 @@
 %define COMPONENT etcd
 %define RPM_NAME caas-%{COMPONENT}
 %define RPM_MAJOR_VERSION 3.3.13
-%define RPM_MINOR_VERSION 1
+%define RPM_MINOR_VERSION 2
 %define IMAGE_TAG %{RPM_MAJOR_VERSION}-%{RPM_MINOR_VERSION}
 %define docker_build_dir %{_builddir}/%{RPM_NAME}-%{RPM_MAJOR_VERSION}/docker-build
 %define docker_save_dir %{_builddir}/%{RPM_NAME}-%{RPM_MAJOR_VERSION}/docker-save
@@ -30,8 +30,8 @@ BuildArch:      x86_64
 Vendor:         %{_platform_vendor} and etcd-io/etcd unmodified
 Source0:        %{name}-%{version}.tar.gz
 
-Requires: docker-ce >= 18.09.2
-BuildRequires: docker-ce-cli >= 18.09.2
+Requires: docker-ce >= 18.09.2, rsync
+BuildRequires: docker-ce-cli >= 18.09.2, xz
 
 %description
 This rpm contains the %{COMPONENT} container for CaaS subsystem.
@@ -55,7 +55,7 @@ docker build \
   --tag %{COMPONENT}:%{IMAGE_TAG} \
   %{docker_build_dir}/%{COMPONENT}/
 mkdir -p %{docker_save_dir}/
-docker save %{COMPONENT}:%{IMAGE_TAG} | gzip -c > %{docker_save_dir}/%{COMPONENT}:%{IMAGE_TAG}.tar
+docker save %{COMPONENT}:%{IMAGE_TAG} | xz -z -T2 > %{docker_save_dir}/%{COMPONENT}:%{IMAGE_TAG}.tar
 docker rmi %{COMPONENT}:%{IMAGE_TAG}
 
 
