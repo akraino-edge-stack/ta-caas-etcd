@@ -75,6 +75,9 @@ spec:
 {% endif %}
         - name: ETCD_LISTENONINTERFACE
           value: "{{ networking.infra_internal.interface }}"
+      resources:
+        requests:
+          cpu: "60m"
       volumeMounts:
         - name: time-mount
           mountPath: /etc/localtime
