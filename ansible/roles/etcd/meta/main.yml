@@ -51,7 +51,7 @@ dependencies:
     cert_path: /etc/etcd/ssl
     alt_names:
       ip:
-        - "{{ ansible_host }}"
+        "{{ lookup('template', 'caas-master-nodes.j2') | from_yaml }}"
     add_users:
       - caas_etcd
       - kube # needed for apiserver

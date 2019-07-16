@@ -89,6 +89,35 @@ spec:
         - name: secret
           mountPath: /etc/etcd/ssl
           readOnly: true
+    - name: kube-etcd-proxy
+      image: {{ container_image_names | select('search', '/etcd') | list | last }}
+{% set etcdproxys = [] -%}
+{%- for nodenumber in range(groups['caas_master']|length|int) -%}
+{%- if etcdproxys.append('https://' + (hostvars[groups.caas_master[nodenumber]]['networking']['infra_internal']['ip']|string) + ':' + (caas.etcd_api_port|string) ) -%}{%- endif -%}
+{%- endfor %}
+      command:
+      - /usr/bin/etcd
+      args:
+      - grpc-proxy
+      - start
+      - --endpoints={{ etcdproxys|join(',')}}
+      - --listen-addr={{ ansible_host }}:{{ caas.etcd_proxy_port }}
+      - --advertise-client-url={{ ansible_host }}:{{ caas.etcd_proxy_port }}
+      - --resolver-prefix='___grpc_proxy_endpoint'
+      - --resolver-ttl=60
+      - --cert=/etc/etcd/ssl/etcd{{ nodeindex }}.pem
+      - --key=/etc/etcd/ssl/etcd{{ nodeindex }}-key.pem
+      - --cacert=/etc/etcd/ssl/ca.pem
+      resources:
+        requests:
+          cpu: "10m"
+      volumeMounts:
+        - name: time-mount
+          mountPath: /etc/localtime
+          readOnly: true
+        - name: secret
+          mountPath: /etc/etcd/ssl
+          readOnly: true
   volumes:
     - name: time-mount
       hostPath:

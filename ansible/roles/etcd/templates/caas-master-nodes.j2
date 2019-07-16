@@ -1,0 +1,4 @@
+{% for host in groups['caas_master']%}
+- "{{ hostvars[host]['networking']['infra_internal']['ip'] }}"
+{% endfor %}
+
