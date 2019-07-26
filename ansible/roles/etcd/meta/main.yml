@@ -49,6 +49,7 @@ dependencies:
   - role: cert
     instance: "etcd{{ nodeindex }}"
     cert_path: /etc/etcd/ssl
+    common_name: "etcd"
     alt_names:
       ip:
         "{{ lookup('template', 'caas-master-nodes.j2') | from_yaml }}"

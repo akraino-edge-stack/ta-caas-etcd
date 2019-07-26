@@ -54,7 +54,7 @@
   environment:
     DOCKER_HOST: "tcp://{{ networking.infra_internal.ip }}:2375"
     DOCKER_TLS_VERIFY: "1"
-    DOCKER_CERT_PATH: "/etc/docker"
+    DOCKER_CERT_PATH: "{{ caas.cert_directory }}"
   register: etcd_container_id
   until: etcd_container_id.stdout
   delay: 5
@@ -65,7 +65,7 @@
   environment:
     DOCKER_HOST: "tcp://{{ networking.infra_internal.ip }}:2375"
     DOCKER_TLS_VERIFY: "1"
-    DOCKER_CERT_PATH: "/etc/docker"
+    DOCKER_CERT_PATH: "{{ caas.cert_directory }}"
   register: result
   until: result.stdout|int == master_list|length|int
   delay: 5

@@ -18,7 +18,7 @@
   environment:
     DOCKER_HOST: "tcp://{{ networking.infra_internal.ip }}:2375"
     DOCKER_TLS_VERIFY: "1"
-    DOCKER_CERT_PATH: "/etc/docker"
+    DOCKER_CERT_PATH: "{{ caas.cert_directory }}"
   register: member_add_result
   until: (member_add_result.stdout.find("exists") != -1 ) or (member_add_result.stdout.find("added") != -1 )
   delay: 10
@@ -29,7 +29,7 @@
   environment:
     DOCKER_HOST: "tcp://{{ networking.infra_internal.ip }}:2375"
     DOCKER_TLS_VERIFY: "1"
-    DOCKER_CERT_PATH: "/etc/docker"
+    DOCKER_CERT_PATH: "{{ caas.cert_directory }}"
   register: addresult
 
 - set_fact:
