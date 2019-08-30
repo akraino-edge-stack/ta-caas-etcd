@@ -15,7 +15,8 @@
 %define COMPONENT etcd
 %define RPM_NAME caas-%{COMPONENT}
 %define RPM_MAJOR_VERSION 3.3.13
-%define RPM_MINOR_VERSION 5
+%define RPM_MINOR_VERSION 6
+%define go_version 1.12.9
 %define IMAGE_TAG %{RPM_MAJOR_VERSION}-%{RPM_MINOR_VERSION}
 %define docker_build_dir %{_builddir}/%{RPM_NAME}-%{RPM_MAJOR_VERSION}/docker-build
 %define docker_save_dir %{_builddir}/%{RPM_NAME}-%{RPM_MAJOR_VERSION}/docker-save
@@ -52,6 +53,7 @@ docker build \
   --build-arg https_proxy="${https_proxy}" \
   --build-arg no_proxy="${no_proxy}" \
   --build-arg ETCD_VERSION="%{version}" \
+  --build-arg go_version="%{go_version}" \
   --tag %{COMPONENT}:%{IMAGE_TAG} \
   %{docker_build_dir}/%{COMPONENT}/
 mkdir -p %{docker_save_dir}/
