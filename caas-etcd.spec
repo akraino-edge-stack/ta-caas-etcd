@@ -15,7 +15,7 @@
 %define COMPONENT etcd
 %define RPM_NAME caas-%{COMPONENT}
 %define RPM_MAJOR_VERSION 3.3.13
-%define RPM_MINOR_VERSION 5
+%define RPM_MINOR_VERSION 6
 %define IMAGE_TAG %{RPM_MAJOR_VERSION}-%{RPM_MINOR_VERSION}
 %define docker_build_dir %{_builddir}/%{RPM_NAME}-%{RPM_MAJOR_VERSION}/docker-build
 %define docker_save_dir %{_builddir}/%{RPM_NAME}-%{RPM_MAJOR_VERSION}/docker-save
@@ -24,7 +24,7 @@ Name:           %{RPM_NAME}
 Version:        %{RPM_MAJOR_VERSION}
 Release:        %{RPM_MINOR_VERSION}%{?dist}
 Summary:        Containers as a Service %{COMPONENT} component
-License:        %{_platform_license} and MIT license and BSD and Apache License and Lesser General Public License
+License:        %{_platform_license} and Commercial and MIT license and BSD and Apache License and Lesser General Public License
 URL:            https://github.com/etcd-io/etcd
 BuildArch:      x86_64
 Vendor:         %{_platform_vendor} and etcd-io/etcd unmodified
