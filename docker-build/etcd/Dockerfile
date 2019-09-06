@@ -46,9 +46,9 @@ RUN apk add py-pip \
 &&  cd ${go_install_dir}/src/ \
 &&  ./make.bash \
 \
-&&  mkdir -p ${GOPATH}/src/github.com/coreos/etcd \
-&&  curl -fsSL -k https://github.com/coreos/etcd/archive/v${ETCD_VERSION}.tar.gz | tar zx --strip-components=1 -C ${GOPATH}/src/github.com/coreos/etcd \
-&&  cd ${GOPATH}/src/github.com/coreos/etcd \
+&&  mkdir -p ${GOPATH}/src/go.etcd.io/etcd \
+&&  curl -fsSL -k https://github.com/coreos/etcd/archive/v${ETCD_VERSION}.tar.gz | tar zx --strip-components=1 -C ${GOPATH}/src/go.etcd.io/etcd \
+&&  cd ${GOPATH}/src/go.etcd.io/etcd \
 &&  GOOS=linux ./build \
 &&  mv bin/etcd /usr/bin/ \
 &&  mv bin/etcdctl /usr/bin/ \
