@@ -14,8 +14,8 @@
 
 %define COMPONENT etcd
 %define RPM_NAME caas-%{COMPONENT}
-%define RPM_MAJOR_VERSION 3.3.13
-%define RPM_MINOR_VERSION 6
+%define RPM_MAJOR_VERSION 3.4.0
+%define RPM_MINOR_VERSION 0
 %define go_version 1.12.9
 %define IMAGE_TAG %{RPM_MAJOR_VERSION}-%{RPM_MINOR_VERSION}
 %define docker_build_dir %{_builddir}/%{RPM_NAME}-%{RPM_MAJOR_VERSION}/docker-build
