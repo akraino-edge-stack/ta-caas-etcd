@@ -27,7 +27,7 @@ Release:        %{RPM_MINOR_VERSION}%{?dist}
 Summary:        Containers as a Service %{COMPONENT} component
 License:        %{_platform_license} and MIT license and BSD and Apache License and Lesser General Public License
 URL:            https://github.com/etcd-io/etcd
-BuildArch:      x86_64
+BuildArch:      %{_arch}
 Vendor:         %{_platform_vendor} and etcd-io/etcd unmodified
 Source0:        %{name}-%{version}.tar.gz
 
