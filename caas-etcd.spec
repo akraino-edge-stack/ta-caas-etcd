@@ -14,7 +14,7 @@
 
 %define COMPONENT etcd
 %define RPM_NAME caas-%{COMPONENT}
-%define RPM_MAJOR_VERSION 3.4.0
+%define RPM_MAJOR_VERSION 3.4.2
 %define RPM_MINOR_VERSION 0
 %define go_version 1.12.9
 %define IMAGE_TAG %{RPM_MAJOR_VERSION}-%{RPM_MINOR_VERSION}
