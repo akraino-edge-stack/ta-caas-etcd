@@ -1,0 +1,8 @@
+Code-Review+1: Robert Eby <re2429@att.com>
+Code-Review+2: Levente Kálé <levente.kale@nokia.com>
+Verified+1: Akraino Jobbuilder <collab-it+akraino-jobbuilder@linuxfoundation.org>
+Submitted-by: Levente Kálé <levente.kale@nokia.com>
+Submitted-at: Fri, 11 Oct 2019 11:40:15 +0000
+Reviewed-on: https://gerrit.akraino.org/r/c/ta/caas-etcd/+/1667
+Project: ta/caas-etcd
+Branch: refs/heads/master
