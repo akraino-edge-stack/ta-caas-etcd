@@ -75,6 +75,8 @@ spec:
 {% endif %}
         - name: ETCD_LISTENONINTERFACE
           value: "{{ networking.infra_internal.interface }}"
+        - name: ETCD_UNSUPPORTED_ARCH
+          value: "arm64"
       resources:
         requests:
           cpu: "60m"
